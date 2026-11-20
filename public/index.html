@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lucas Lima — Suporte Técnico e Dev Full-Stack</title>
+<meta name="description" content="Lucas Lima: suporte técnico Help Desk e desenvolvedor full-stack (Node.js, JavaScript). Projetos, experiência e contato.">
+<meta name="theme-color" content="#0c0e1a">
+<meta property="og:title" content="Lucas Lima — Suporte Técnico e Dev Full-Stack">
+<meta property="og:description" content="Um portfólio que funciona como um desktop. Abra as janelas e explore.">
+<meta property="og:image" content="https://lucasln7.github.io/lucas-portfolio/img/imagem1.jpeg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<!-- TELA DE INICIALIZAÇÃO -->
+<div class="boot" id="boot">
+  <div class="boot-fase" id="faseBoot">
+    <div class="boot-logo">LL<span>.</span></div>
+    <div class="boot-barra"><i id="bootProgresso"></i></div>
+    <p class="boot-msg" id="bootMsg">Iniciando sistema…</p>
+  </div>
+  <div class="boot-fase" id="faseLogin" hidden>
+    <div class="login-foto"><img src="../img/imagem1.jpeg" alt="Lucas Lima"></div>
+    <h2>Lucas Lima</h2>
+    <p class="login-sub">Suporte Técnico e Full-Stack</p>
+    <button class="btn login-btn" id="btnEntrar"><i class="fa fa-arrow-right-to-bracket"></i> Entrar</button>
+    <small>ou pressione Enter</small>
+  </div>
+  <button class="boot-pular" id="bootPular">Pular</button>
+</div>
+
+
+<!-- BARRA DE MENU -->
+<header class="menubar">
+  <div class="mb-left">
+    <i class="fa-brands fa-apple mb-apple"></i>
+    <strong id="appName">Finder</strong>
+    <span class="mb-item">Arquivo</span><span class="mb-item">Janela</span><span class="mb-item">Ajuda</span>
+  </div>
+  <div class="mb-right">
+    <button class="mb-busca" data-cc aria-label="Central de controle"><i class="fa fa-sliders"></i></button><button class="mb-busca" data-spot aria-label="Buscar (Ctrl+K)"><i class="fa fa-magnifying-glass"></i></button><i class="fa fa-wifi"></i><i class="fa fa-battery-three-quarters"></i>
+    <span id="relogio"></span>
+  </div>
+</header>
+
+<!-- ÁREA DE TRABALHO -->
+<main class="desktop" id="desktop">
+  <div class="aurora"><i></i><i></i></div>
+
+  <div class="boas-vindas">
+    <img src="../img/imagem1.jpeg" alt="Lucas Lima" class="bv-foto">
+    <h1>Lucas Lima</h1>
+    <p>Suporte Técnico e Desenvolvedor Full-Stack</p>
+    <span class="bv-badge"><i></i> Disponível para oportunidades</span>
+    <small>Clique nos ícones para abrir</small>
+  </div>
+
+  <nav class="icones">
+    <button class="icone" data-abrir="sobre"><i class="fa fa-folder"></i><span>Sobre</span></button>
+    <button class="icone" data-abrir="projetos"><i class="fa fa-folder"></i><span>Projetos</span></button>
+    <button class="icone" data-abrir="skills"><i class="fa fa-folder"></i><span>Skills</span></button>
+  </nav>
+
+  <!-- JANELA: SOBRE -->
+  <section class="janela" id="sobre" data-titulo="Sobre mim" style="--x:90px;--y:70px;--w:560px">
+    <div class="barra"><span class="semaforo"><b class="b-fechar"></b><b class="b-min"></b><b class="b-max"></b></span><span class="titulo">Sobre mim</span></div>
+    <div class="conteudo">
+      <div class="perfil">
+        <img src="../img/imagem1.jpeg" alt="Lucas Lima">
+        <div><h2>Lucas Lima</h2><p class="mudo">19 anos · São Paulo, Brasil</p></div>
+      </div>
+      <p>Estudo <strong>Análise e Desenvolvimento de Sistemas</strong> na FAM e sou estagiário de TI na <strong>Progroup Tecnologia da Informação</strong>. Atuo com <strong>suporte técnico Help Desk</strong>, atendendo usuários internos e fazendo manutenção de computadores, do diagnóstico ao reparo de equipamentos com defeito no laboratório.</p>
+      <p>Tenho experiência prática em <strong>HTML, CSS, JavaScript e Node.js</strong>, com integração de APIs externas e soluções de inteligência artificial. Meu projeto pessoal é uma landing page do Corinthians com <strong>chatbot de IA</strong>, jogos em tempo real e boas práticas de segurança no gerenciamento de chaves de API.</p>
+      <p>Quero continuar evoluindo em TI, aprofundar meus conhecimentos em <strong>desenvolvimento de sistemas e suporte técnico</strong> e contribuir com soluções tecnológicas.</p>
+      <div class="botoes">
+        <button class="btn" data-abrir="contato"><i class="fa fa-envelope"></i> Falar comigo</button>
+        <button class="btn sec" data-abrir="experiencia"><i class="fa fa-briefcase"></i> Ver experiência</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- JANELA: EXPERIÊNCIA -->
+  <section class="janela" id="experiencia" data-titulo="Experiência" style="--x:200px;--y:110px;--w:580px">
+    <div class="barra"><span class="semaforo"><b class="b-fechar"></b><b class="b-min"></b><b class="b-max"></b></span><span class="titulo">Experiência</span></div>
+    <div class="conteudo">
+      <div class="item-exp">
+        <div class="exp-topo"><div><h3>Estagiário de TI — Help Desk</h3><span class="acento">Progroup Tecnologia da Informação · São Paulo, presencial</span></div><span class="pill">ago 2025 — atual</span></div>
+        <p>Suporte técnico e atendimento Help Desk aos usuários internos, ajudando a identificar e resolver problemas de hardware e software.</p>
+        <p>Registro e acompanhamento de chamados técnicos, com qualidade, organização e dentro dos prazos.</p>
+        <p>No laboratório de TI, analiso, diagnostico e reparo computadores recebidos com defeito, o que reforça minhas habilidades em manutenção de equipamentos e identificação de falhas.</p>
+        <div class="tags"><span>Help Desk</span><span>Service Desk</span><span>Chamados</span><span>Manutenção de computadores</span><span>Diagnóstico de falhas</span><span>Laboratório de TI</span></div>
+      </div>
+      <div class="item-exp">
+        <div class="exp-topo"><div><h3>Estudante de ADS</h3><span class="acento">FAM — Faculdade das Américas</span></div><span class="pill">2025 — cursando</span></div>
+        <p>Análise e Desenvolvimento de Sistemas, com foco em desenvolvimento web, lógica de programação, banco de dados e infraestrutura de TI.</p>
+        <div class="tags"><span>ADS</span><span>Programação</span><span>Banco de Dados</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- JANELA: SKILLS -->
+  <section class="janela" id="skills" data-titulo="Skills" style="--x:300px;--y:90px;--w:520px">
+    <div class="barra"><span class="semaforo"><b class="b-fechar"></b><b class="b-min"></b><b class="b-max"></b></span><span class="titulo">Skills</span></div>
+    <div class="conteudo">
+      <div class="skills-grid">
+        <div class="skill"><i class="fa-brands fa-html5"></i>HTML5</div>
+        <div class="skill"><i class="fa-brands fa-css3-alt"></i>CSS3</div>
+        <div class="skill"><i class="fa-brands fa-js"></i>JavaScript</div>
+        <div class="skill"><i class="fa-brands fa-node-js"></i>Node.js</div>
+        <div class="skill"><i class="fa-brands fa-python"></i>Python</div>
+        <div class="skill"><i class="fa-brands fa-github"></i>Git/GitHub</div>
+        <div class="skill"><i class="fa fa-network-wired"></i>Redes</div>
+        <div class="skill"><i class="fa fa-robot"></i>IA / APIs</div>
+        <div class="skill"><i class="fa fa-headset"></i>Help Desk</div>
+        <div class="skill"><i class="fa fa-screwdriver-wrench"></i>Manutenção de PCs</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- JANELA: PROJETOS -->
+  <section class="janela" id="projetos" data-titulo="Projetos" style="--x:150px;--y:60px;--w:700px">
+    <div class="barra"><span class="semaforo"><b class="b-fechar"></b><b class="b-min"></b><b class="b-max"></b></span><span class="titulo">Projetos</span></div>
+    <div class="conteudo">
+      <div class="projetos-grid">
+        <a class="proj" href="https://github.com/LucasLn7/corinthians-fullstack-." target="_blank" rel="noopener">
+          <img src="../img/imagem2.jpeg" alt="Landing Page Corinthians">
+          <div class="proj-info"><div class="proj-topo"><h3>Landing Page — Corinthians</h3><span class="st ok">Concluído</span></div>
+          <p>Landing page com chatbot integrado por IA, consulta de jogos em tempo real e funcionalidades interativas. Backend em Node.js, com boas práticas de segurança no gerenciamento de chaves de API.</p>
+          <div class="tags"><span>HTML</span><span>CSS</span><span>Node.js</span><span>IA</span><span>ChatBot</span><span>API</span><span>Segurança</span></div></div>
+        </a>
+        <a class="proj" href="https://github.com/LucasLn7/Sistema-de-Gest-o-de-Estoque" target="_blank" rel="noopener">
+          <img src="../img/imagem3.png" alt="Sistema de Gestão de Estoque">
+          <div class="proj-info"><div class="proj-topo"><h3>Sistema de Gestão de Estoque</h3><span class="st dev">Em desenvolvimento</span></div>
+          <p>Gerenciamento de estoque e pedidos com painel de vendas, filtro por categorias, cadastro de produtos e acompanhamento de pedidos.</p>
+          <div class="tags"><span>HTML</span><span>CSS</span><span>JavaScript</span><span>Node.js</span><span>PHP</span></div></div>
+        </a>
+        <a class="proj" href="https://lucasln7.github.io/landing-limpeza-sp/" target="_blank" rel="noopener" data-demo="Limpeza SP">
+          <img src="../img/imagem4.png" alt="Landing Page Limpeza SP">
+          <div class="proj-info"><div class="proj-topo"><h3>Landing Page — Limpeza SP</h3><span class="st ok">Concluído</span></div>
+          <p>Landing page simples e completa usando apenas HTML, CSS e JavaScript.</p>
+          <div class="tags"><span>HTML</span><span>CSS</span><span>JavaScript</span></div></div>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- JANELA: CONTATO -->
+  <section class="janela" id="contato" data-titulo="Mensagens" style="--x:260px;--y:100px;--w:440px">
+    <div class="barra"><span class="semaforo"><b class="b-fechar"></b><b class="b-min"></b><b class="b-max"></b></span><span class="titulo">Mensagens</span></div>
+    <div class="conteudo">
+      <p class="mudo">Aberto a oportunidades, freelas e parcerias. A mensagem chega direto no meu WhatsApp.</p>
+      <form id="formulario">
+        <label for="nome">Nome</label>
+        <input id="nome" placeholder="Seu nome" autocomplete="name">
+        <label for="mensagem">Mensagem</label>
+        <textarea id="mensagem" placeholder="Qual é o seu projeto ou proposta?"></textarea>
+        <button type="submit" class="btn"><i class="fa-brands fa-whatsapp"></i> Enviar pelo WhatsApp</button>
+      </form>
+    </div>
+  </section>
+
+  <!-- JANELA: TERMINAL -->
+  <section class="janela" id="terminal" data-titulo="Terminal" style="--x:120px;--y:90px;--w:620px">
+    <div class="barra"><span class="semaforo"><b class="b-fechar"></b><b class="b-min"></b><b class="b-max"></b></span><span class="titulo">visitante — zsh</span></div>
+    <div class="conteudo term" id="termTela">
+      <div id="termSaida"></div>
+      <div class="term-linha"><span class="prompt">visitante@lucas ~ %</span><input id="termInput" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="Comando"></div>
+    </div>
+  </section>
+
+  <!-- JANELA: GITHUB -->
+  <section class="janela" id="github" data-titulo="GitHub" style="--x:230px;--y:80px;--w:600px">
+    <div class="barra"><span class="semaforo"><b class="b-fechar"></b><b class="b-min"></b><b class="b-max"></b></span><span class="titulo">GitHub — LucasLn7</span></div>
+    <div class="conteudo">
+      <div class="gh-perfil" id="ghPerfil"><p class="mudo">Carregando dados do GitHub…</p></div>
+      <div class="gh-repos" id="ghRepos"></div>
+      <a class="btn sec" href="https://github.com/LucasLn7" target="_blank" rel="noopener"><i class="fa-brands fa-github"></i> Ver perfil completo</a>
+    </div>
+  </section>
+
+  <!-- JANELA: CURRÍCULO -->
+  <section class="janela" id="curriculo" data-titulo="Currículo" style="--x:180px;--y:50px;--w:700px">
+    <div class="barra"><span class="semaforo"><b class="b-fechar"></b><b class="b-min"></b><b class="b-max"></b></span><span class="titulo">Currículo.pdf</span></div>
+    <div class="conteudo sem-pad">
+      <iframe title="Currículo de Lucas Lima" src="https://drive.google.com/file/d/15iFUcG71tnxdCfi4azKG59TCOb52wqIe/preview"></iframe>
+      <a class="btn" href="https://drive.google.com/file/d/15iFUcG71tnxdCfi4azKG59TCOb52wqIe/view?usp=sharing" target="_blank" rel="noopener"><i class="fa fa-download"></i> Abrir no Drive</a>
+    </div>
+  </section>
+
+  <!-- JANELA: MÚSICA -->
+  <section class="janela" id="musica" data-titulo="Música" style="--x:260px;--y:70px;--w:440px">
+    <div class="barra"><span class="semaforo"><b class="b-fechar"></b><b class="b-min"></b><b class="b-max"></b></span><span class="titulo">Música</span></div>
+    <div class="conteudo">
+      <p class="mudo">O que eu ouço enquanto programo.</p>
+      <div id="musicaCorpo"></div>
+    </div>
+  </section>
+
+  <!-- JANELA: NAVEGADOR (prévia de projetos) -->
+  <section class="janela" id="navegador" data-titulo="Navegador" style="--x:140px;--y:56px;--w:820px">
+    <div class="barra"><span class="semaforo"><b class="b-fechar"></b><b class="b-min"></b><b class="b-max"></b></span><span class="titulo" id="navTitulo">Navegador</span></div>
+    <div class="conteudo sem-pad">
+      <div class="nav-barra"><span class="nav-url" id="navUrl"></span><a class="btn sec" id="navExterno" href="#" target="_blank" rel="noopener"><i class="fa fa-arrow-up-right-from-square"></i> Abrir em nova aba</a></div>
+      <iframe id="navFrame" title="Prévia do projeto" loading="lazy"></iframe>
+    </div>
+  </section>
+</main>
+
+<!-- DOCK -->
+<footer class="dock-wrap">
+  <nav class="dock">
+    <button class="dock-item" data-abrir="sobre" data-nome="Sobre" style="--c:#6366f1"><i class="fa fa-user"></i></button>
+    <button class="dock-item" data-abrir="experiencia" data-nome="Experiência" style="--c:#0ea5e9"><i class="fa fa-briefcase"></i></button>
+    <button class="dock-item" data-abrir="skills" data-nome="Skills" style="--c:#f59e0b"><i class="fa fa-code"></i></button>
+    <button class="dock-item" data-abrir="projetos" data-nome="Projetos" style="--c:#7c3aed"><i class="fa fa-layer-group"></i></button>
+    <button class="dock-item" data-abrir="contato" data-nome="Mensagens" style="--c:#22c55e"><i class="fa fa-comment"></i></button>
+    <button class="dock-item" data-abrir="terminal" data-nome="Terminal" style="--c:#1f2937"><i class="fa fa-terminal"></i></button>
+    <button class="dock-item" data-abrir="github" data-nome="GitHub" style="--c:#24292f"><i class="fa-brands fa-github"></i></button>
+    <button class="dock-item" data-abrir="musica" data-nome="Música" style="--c:#ec4899"><i class="fa fa-music"></i></button>
+    <span class="dock-sep"></span>
+    <button class="dock-item" data-abrir="curriculo" data-nome="Currículo" style="--c:#ef4444"><i class="fa fa-file-lines"></i></button>
+    <a class="dock-item" href="https://www.linkedin.com/in/lucasln7/" target="_blank" rel="noopener" data-nome="LinkedIn" style="--c:#0a66c2"><i class="fa-brands fa-linkedin-in"></i></a>
+  <button class="dock-item" id="lixeira" data-nome="Lixeira" style="--c:#64748b"><i class="fa fa-trash-can"></i></button>
+  </nav>
+</footer>
+
+<!-- GUIA -->
+<div class="guia" id="guia">
+  <div class="guia-balao" id="guiaBalao" hidden>
+    <button class="guia-x" id="guiaFechar" aria-label="Fechar">×</button>
+    <div class="guia-nome" id="guiaNome">Paimon</div>
+    <p class="guia-texto" id="guiaTexto"></p>
+    <div class="guia-opcoes" id="guiaOpcoes"></div>
+    <form class="guia-form" id="guiaForm">
+      <input id="guiaInput" placeholder="Pergunte algo…" autocomplete="off" aria-label="Pergunte algo à guia">
+      <button type="submit" aria-label="Enviar"><i class="fa fa-paper-plane"></i></button>
+    </form>
+  </div>
+  <button class="guia-avatar" id="guiaAvatar" aria-label="Falar com a guia">
+    <img src="../img/paimon.png" alt="" id="guiaImg">
+  </button>
+</div>
+
+<!-- CENTRAL DE CONTROLE -->
+<div class="cc" id="cc" hidden>
+  <button class="cc-tile" id="ccTema"><i class="fa fa-circle-half-stroke"></i><span>Tema</span><small id="ccTemaTxt">Escuro</small></button>
+  <button class="cc-tile" id="ccAurora"><i class="fa fa-wand-magic-sparkles"></i><span>Aurora</span><small id="ccAuroraTxt">Ligada</small></button>
+  <button class="cc-tile" id="ccGuia"><i class="fa fa-comment-dots"></i><span>Guia</span><small id="ccGuiaTxt">Ligado</small></button>
+  <label class="cc-slider"><i class="fa fa-sun"></i><input type="range" id="ccBrilho" min="40" max="100" value="100" aria-label="Brilho"></label>
+</div>
+<div class="escurecer" id="escurecer"></div>
+
+<!-- SPOTLIGHT -->
+<div class="spot" id="spot" hidden>
+  <div class="spot-caixa" role="dialog" aria-label="Busca">
+    <input id="spotInput" placeholder="Buscar projetos, skills, janelas…" autocomplete="off" aria-label="Buscar">
+    <ul id="spotLista"></ul>
+  </div>
+</div>
+
+<!-- MENU DE CONTEXTO -->
+<ul class="ctx" id="ctx" hidden>
+  <li data-acao="terminal">Abrir Terminal</li>
+  <li data-acao="spot">Buscar… <small>Ctrl+K</small></li>
+  <li data-acao="curriculo">Ver currículo</li>
+  <li data-acao="tema">Alternar tema claro/escuro</li>
+  <li data-acao="sobre-site">Sobre este portfólio</li>
+</ul>
+
+<!-- NOTIFICAÇÃO -->
+<div class="toast" id="toast" hidden><i class="fa fa-bell"></i><div><strong id="toastT"></strong><span id="toastD"></span></div></div>
+
+<script src="js.js"></script>
+</body>
+</html>
