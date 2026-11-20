@@ -19,7 +19,7 @@ Feito com **HTML, CSS e JavaScript puros**, sem frameworks e sem dependências d
 
 > Adicione aqui um GIF ou print do site (por exemplo `img/preview.gif`):
 >
-> <img src="img/preview.jpeg" width="200">
+> <img src="img/preview.jpeg" width="700">
 
 
 ---
