@@ -25,7 +25,7 @@
     <p class="boot-msg" id="bootMsg">Iniciando sistema…</p>
   </div>
   <div class="boot-fase" id="faseLogin" hidden>
-    <div class="login-foto"><img src="../img/imagem1.jpeg" alt="Lucas Lima"></div>
+    <div class="login-foto"><img src="./img/imagem1.jpeg" alt="Lucas Lima"></div>
     <h2>Lucas Lima</h2>
     <p class="login-sub">Suporte Técnico e Full-Stack</p>
     <button class="btn login-btn" id="btnEntrar"><i class="fa fa-arrow-right-to-bracket"></i> Entrar</button>
@@ -53,7 +53,7 @@
   <div class="aurora"><i></i><i></i></div>
 
   <div class="boas-vindas">
-    <img src="img/imagem1.jpeg" alt="Lucas Lima" class="bv-foto">
+    <img src="./img/imagem1.jpeg" alt="Lucas Lima" class="bv-foto">
     <h1>Lucas Lima</h1>
     <p>Suporte Técnico e Desenvolvedor Full-Stack</p>
     <span class="bv-badge"><i></i> Disponível para oportunidades</span>
@@ -71,7 +71,7 @@
     <div class="barra"><span class="semaforo"><b class="b-fechar"></b><b class="b-min"></b><b class="b-max"></b></span><span class="titulo">Sobre mim</span></div>
     <div class="conteudo">
       <div class="perfil">
-        <img src="img/imagem1.jpeg" alt="Lucas Lima">
+        <img src="./img/imagem1.jpeg" alt="Lucas Lima">
         <div><h2>Lucas Lima</h2><p class="mudo">19 anos · São Paulo, Brasil</p></div>
       </div>
       <p>Estudo <strong>Análise e Desenvolvimento de Sistemas</strong> na FAM e sou estagiário de TI na <strong>Progroup Tecnologia da Informação</strong>. Atuo com <strong>suporte técnico Help Desk</strong>, atendendo usuários internos e fazendo manutenção de computadores, do diagnóstico ao reparo de equipamentos com defeito no laboratório.</p>
@@ -128,19 +128,19 @@
     <div class="conteudo">
       <div class="projetos-grid">
         <a class="proj" href="https://github.com/LucasLn7/corinthians-fullstack-." target="_blank" rel="noopener">
-          <img src="img/imagem2.jpeg" alt="Landing Page Corinthians">
+          <img src="./img/imagem2.jpeg" alt="Landing Page Corinthians">
           <div class="proj-info"><div class="proj-topo"><h3>Landing Page — Corinthians</h3><span class="st ok">Concluído</span></div>
           <p>Landing page com chatbot integrado por IA, consulta de jogos em tempo real e funcionalidades interativas. Backend em Node.js, com boas práticas de segurança no gerenciamento de chaves de API.</p>
           <div class="tags"><span>HTML</span><span>CSS</span><span>Node.js</span><span>IA</span><span>ChatBot</span><span>API</span><span>Segurança</span></div></div>
         </a>
         <a class="proj" href="https://github.com/LucasLn7/Sistema-de-Gest-o-de-Estoque" target="_blank" rel="noopener">
-          <img src="img/imagem3.png" alt="Sistema de Gestão de Estoque">
+          <img src="./img/imagem3.png" alt="Sistema de Gestão de Estoque">
           <div class="proj-info"><div class="proj-topo"><h3>Sistema de Gestão de Estoque</h3><span class="st dev">Em desenvolvimento</span></div>
           <p>Gerenciamento de estoque e pedidos com painel de vendas, filtro por categorias, cadastro de produtos e acompanhamento de pedidos.</p>
           <div class="tags"><span>HTML</span><span>CSS</span><span>JavaScript</span><span>Node.js</span><span>PHP</span></div></div>
         </a>
         <a class="proj" href="https://lucasln7.github.io/landing-limpeza-sp/" target="_blank" rel="noopener" data-demo="Limpeza SP">
-          <img src="img/imagem4.png" alt="Landing Page Limpeza SP">
+          <img src="./img/imagem4.png" alt="Landing Page Limpeza SP">
           <div class="proj-info"><div class="proj-topo"><h3>Landing Page — Limpeza SP</h3><span class="st ok">Concluído</span></div>
           <p>Landing page simples e completa usando apenas HTML, CSS e JavaScript.</p>
           <div class="tags"><span>HTML</span><span>CSS</span><span>JavaScript</span></div></div>
@@ -242,7 +242,7 @@
     </form>
   </div>
   <button class="guia-avatar" id="guiaAvatar" aria-label="Falar com a guia">
-    <img src="img/paimon.png" alt="" id="guiaImg">
+    <img src="./img/paimon.png" alt="" id="guiaImg">
   </button>
 </div>
 
@@ -272,8 +272,17 @@
   <li data-acao="sobre-site">Sobre este portfólio</li>
 </ul>
 
-<!-- NOTIFICAÇÃO -->
-<div class="toast" id="toast" hidden><i class="fa fa-bell"></i><div><strong id="toastT"></strong><span id="toastD"></span></div></div>
+<!-- ILHA DINÂMICA -->
+<div class="ilha" id="ilha" data-modo="idle">
+  <i class="ilha-ic fa fa-bell" id="ilhaIc" aria-hidden="true"></i>
+  <div class="ilha-textos" role="status" aria-live="polite"><strong id="ilhaTit"></strong><span id="ilhaTxt"></span></div>
+  <div class="ondas" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+  <div class="ilha-musica">
+    <button id="ilhaPlay" class="ilha-btn" aria-label="Tocar ou pausar"><i class="fa fa-play" id="ilhaPlayIc"></i></button>
+    <div class="ilha-prog"><span id="ilhaTempo">0:00</span><div class="ilha-barra"><i id="ilhaProg"></i></div><span id="ilhaDur">0:00</span></div>
+    <button id="ilhaAbrir" class="ilha-btn" aria-label="Abrir janela de música"><i class="fa fa-up-right-from-square"></i></button>
+  </div>
+</div>
 
 <script src="js.js"></script>
 </body>

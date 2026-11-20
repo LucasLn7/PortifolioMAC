@@ -4,7 +4,8 @@ function atualizarRelogio() {
   const d = new Date();
   const dia = d.toLocaleDateString('pt-BR', { weekday: 'short', day: 'numeric', month: 'short' }).replace('.', '');
   const hora = d.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
-  relogio.textContent = `${dia}  ${hora}`;
+  const sd = document.createElement('span'); sd.className = 'relogio-data'; sd.textContent = dia + '  ';
+  relogio.replaceChildren(sd, hora);
 }
 atualizarRelogio();
 setInterval(atualizarRelogio, 30000);
@@ -165,22 +166,52 @@ document.getElementById('formulario').addEventListener('submit', e => {
   window.open(`https://wa.me/${telefone}?text=${encodeURIComponent(texto)}`, '_blank');
 });
 
-// ── NOTIFICAÇÃO ──
-let timerToast;
-function notificar(titulo, texto) {
-  const t = document.getElementById('toast');
-  document.getElementById('toastT').textContent = titulo;
-  document.getElementById('toastD').textContent = texto;
-  t.classList.remove('saindo');
-  t.hidden = false;
-  clearTimeout(timerToast);
-  timerToast = setTimeout(() => {
-    t.classList.add('saindo');
-    setTimeout(() => { t.hidden = true; }, 350);
-  }, 4500);
+// ── ILHA DINÂMICA ──
+const ilha = document.getElementById('ilha');
+const ilhaIc = document.getElementById('ilhaIc');
+const ilhaTit = document.getElementById('ilhaTit');
+const ilhaTxt = document.getElementById('ilhaTxt');
+let avisoAtual = null, guiaMsg = null, musicaTocando = false, musicaAberta = false, musicaCtl = null;
+const filaAvisos = [];
+let mostrandoAviso = false;
+
+function atualizarIlha() {
+  const modo = avisoAtual ? 'aviso'
+    : guiaMsg ? 'guia'
+    : (musicaAberta && musicaCtl) ? 'aberta'
+    : musicaTocando ? 'tocando' : 'idle';
+  ilha.dataset.modo = modo;
+  if (modo === 'aviso') {
+    ilhaIc.className = 'ilha-ic ' + avisoAtual.ic;
+    ilhaTit.textContent = avisoAtual.titulo; ilhaTxt.textContent = avisoAtual.texto;
+  } else if (modo === 'guia') {
+    ilhaIc.className = 'ilha-ic fa fa-wand-magic-sparkles girando';
+    ilhaTit.textContent = 'Paimon'; ilhaTxt.textContent = guiaMsg;
+  } else {
+    if (modo === 'tocando') ilhaIc.className = 'ilha-ic fa fa-music';
+    ilhaTit.textContent = ''; ilhaTxt.textContent = '';
+  }
 }
+async function processarFila() {
+  if (mostrandoAviso) return;
+  mostrandoAviso = true;
+  while (filaAvisos.length) {
+    avisoAtual = filaAvisos.shift(); atualizarIlha();
+    await new Promise(r => setTimeout(r, 4200));
+    avisoAtual = null; atualizarIlha();
+    await new Promise(r => setTimeout(r, 450));
+  }
+  mostrandoAviso = false;
+}
+function notificar(titulo, texto, ic = 'fa fa-bell') {
+  filaAvisos.push({ titulo, texto, ic });
+  if (filaAvisos.length > 4) filaAvisos.shift();
+  processarFila();
+}
+function ilhaGuia(msg) { guiaMsg = msg; atualizarIlha(); }
+
 document.getElementById('lixeira').addEventListener('click', () =>
-  notificar('Lixeira', 'Vazia. Meus bugs também... quase.'));
+  notificar('Lixeira', 'Vazia. Meus bugs também... quase.', 'fa fa-trash-can'));
 
 // ── TERMINAL ──
 const termSaida = document.getElementById('termSaida');
@@ -208,7 +239,7 @@ function executar(linha) {
   const alvo = nome === 'abrir' ? args[0] : nome;
   if (!nome) return;
   if (comandos[nome]) comandos[nome]().forEach(l => escrever(l));
-  if (janelasCmd.includes(alvo)) { escrever('Abrindo ' + alvo + '…', 'ok'); abrir(alvo); }
+  if (janelasCmd.includes(alvo)) { escrever('Abrindo ' + alvo + '…', 'ok'); abrir(alvo); notificar('Terminal', 'Abrindo ' + alvo, 'fa fa-terminal'); }
   else if (!comandos[nome]) escrever(`comando não encontrado: ${nome}. Digite help.`, 'erro');
 }
 termInput.addEventListener('keydown', e => {
@@ -244,6 +275,7 @@ document.querySelector('[data-abrir="terminal"]').addEventListener('click', () =
     const st = document.createElement('div'); st.className = 'gh-stats';
     [`${u.public_repos} repositórios`, `${u.followers} seguidores`].forEach(t => { const s = document.createElement('span'); s.textContent = t; st.appendChild(s); });
     info.append(h2, bio, st); perfil.append(img, info);
+    window.ghResumo = `${u.public_repos} repositórios públicos · ${u.followers} seguidores`;
     r.filter(x => !x.fork).forEach(x => {
       const a = document.createElement('a'); a.className = 'repo'; a.href = x.html_url; a.target = '_blank'; a.rel = 'noopener';
       const n = document.createElement('strong'); n.textContent = x.name;
@@ -326,9 +358,27 @@ document.addEventListener('pointerdown', e => { if (!e.target.closest('#ctx')) c
 
 // ── MÚSICA (Spotify) ──
 // Cole aqui o link da sua playlist do Spotify (Compartilhar > Copiar link da playlist)
-const SPOTIFY_PLAYLIST = '';
+const SPOTIFY_PLAYLIST = 'https://open.spotify.com/playlist/39ijsJu8n8li6P3pipFk48?si=33267e6e6e0e403f';
 
 let musicaCarregada = false;
+const fmt = ms => { const s = Math.floor((ms || 0) / 1000); return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`; };
+
+function iframeSimples(onde, id) {
+  const f = document.createElement('iframe');
+  f.src = `https://open.spotify.com/embed/playlist/${id}?utm_source=generator&theme=0`;
+  f.allow = 'autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture';
+  f.loading = 'lazy'; f.title = 'Playlist do Spotify';
+  onde.appendChild(f);
+}
+function atualizarProgresso(d) {
+  if (!d) return;
+  const tocando = !d.isPaused;
+  if (tocando !== musicaTocando) { musicaTocando = tocando; atualizarIlha(); }
+  document.getElementById('ilhaProg').style.width = (d.duration ? (d.position / d.duration) * 100 : 0) + '%';
+  document.getElementById('ilhaTempo').textContent = fmt(d.position);
+  document.getElementById('ilhaDur').textContent = fmt(d.duration);
+  document.getElementById('ilhaPlayIc').className = 'fa ' + (tocando ? 'fa-pause' : 'fa-play');
+}
 function carregarMusica() {
   if (musicaCarregada) return;
   musicaCarregada = true;
@@ -338,14 +388,40 @@ function carregarMusica() {
     corpo.innerHTML = '<div class="aviso-musica">Nenhuma playlist configurada. No <code>js.js</code>, cole o link da sua playlist do Spotify em <code>SPOTIFY_PLAYLIST</code>.</div>';
     return;
   }
-  const f = document.createElement('iframe');
-  f.src = `https://open.spotify.com/embed/playlist/${id}?utm_source=generator&theme=0`;
-  f.allow = 'autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture';
-  f.loading = 'lazy';
-  f.title = 'Playlist do Spotify';
-  corpo.appendChild(f);
+  const alvo = document.createElement('div');
+  corpo.appendChild(alvo);
+  window.onSpotifyIframeApiReady = IFrameAPI => {
+    IFrameAPI.createController(alvo, { uri: `spotify:playlist:${id}`, width: '100%', height: 352, theme: '0' }, ctl => {
+      musicaCtl = ctl;
+      ctl.addListener('playback_update', e => atualizarProgresso(e.data));
+    });
+  };
+  const s = document.createElement('script');
+  s.src = 'https://open.spotify.com/embed/iframe-api/v1'; s.async = true;
+  s.onerror = () => { alvo.replaceChildren(); iframeSimples(alvo, id); };
+  document.body.appendChild(s);
+  // se a API não responder, usa o player simples (sem controles na ilha)
+  setTimeout(() => { if (!musicaCtl && !alvo.querySelector('iframe')) iframeSimples(alvo, id); }, 7000);
 }
 document.querySelectorAll('[data-abrir="musica"]').forEach(el => el.addEventListener('click', carregarMusica));
+
+// controles da ilha
+ilha.addEventListener('click', () => {
+  if (!musicaCtl || avisoAtual || guiaMsg) return;
+  musicaAberta = !musicaAberta; atualizarIlha();
+});
+document.getElementById('ilhaPlay').addEventListener('click', e => { e.stopPropagation(); if (musicaCtl) musicaCtl.togglePlay(); });
+document.getElementById('ilhaAbrir').addEventListener('click', e => {
+  e.stopPropagation(); musicaAberta = false; atualizarIlha(); abrir('musica');
+});
+document.addEventListener('pointerdown', e => {
+  if (musicaAberta && !e.target.closest('#ilha')) { musicaAberta = false; atualizarIlha(); }
+});
+
+// aviso ao abrir o GitHub
+document.querySelectorAll('[data-abrir="github"]').forEach(el => el.addEventListener('click', () => {
+  if (window.ghResumo) notificar('GitHub', window.ghResumo, 'fa-brands fa-github');
+}));
 
 // ── NAVEGADOR (prévia de projetos) ──
 function abrirDemo(url, nome) {
@@ -371,7 +447,10 @@ function aplicarTema(t) {
   document.querySelector('meta[name="theme-color"]').content = t === 'light' ? '#eceeff' : '#0c0e1a';
   salvar('tema', t);
 }
-function alternarTema() { aplicarTema(raiz.dataset.tema === 'light' ? 'dark' : 'light'); }
+function alternarTema() {
+  aplicarTema(raiz.dataset.tema === 'light' ? 'dark' : 'light');
+  notificar('Tema', raiz.dataset.tema === 'light' ? 'Modo claro ativado' : 'Modo escuro ativado', 'fa fa-circle-half-stroke');
+}
 function aplicarAurora(ligada) {
   raiz.classList.toggle('sem-aurora', !ligada);
   document.getElementById('ccAuroraTxt').textContent = ligada ? 'Ligada' : 'Desligada';
@@ -506,6 +585,7 @@ const enter = campo => campo.dispatchEvent(new KeyboardEvent('keydown', { key: '
 
 async function abrirApp(id) {
   const el = document.querySelector(`.dock-item[data-abrir="${id}"]`);
+  ilhaGuia('Abrindo ' + (el?.dataset.nome || id));
   await clicarEm(el);
   if (el) el.click();
   await dormir(350);
@@ -513,6 +593,7 @@ async function abrirApp(id) {
 async function demoTerminal(cmds) {
   await abrirApp('terminal');
   for (const c of cmds) {
+    ilhaGuia('Rodando: ' + c);
     await digitar(termInput, c);
     await dormir(250);
     enter(termInput);
@@ -539,6 +620,7 @@ const roteiros = {
     a.click();
   },
   async tema() {
+    ilhaGuia('Trocando o tema');
     const b = document.querySelector('[data-cc]');
     await clicarEm(b); b.click();
     await dormir(300);
@@ -548,6 +630,7 @@ const roteiros = {
     await clicarEm(b); b.click();
   },
   async busca() {
+    ilhaGuia('Usando a busca');
     const b = document.querySelector('[data-spot]');
     await clicarEm(b); b.click();
     await dormir(300);
@@ -563,12 +646,12 @@ const roteiros = {
 
 async function agir(roteiro, fim, opcoes) {
   if (ocupado) return;
-  ocupado = true; gAvatar.classList.add('agindo');
+  ocupado = true; gAvatar.classList.add('agindo'); ilhaGuia('Em ação…');
   const inicios = ['Deixa que Paimon clica!', 'Já abro, um segundinho!', 'Paimon cuida disso!'];
   falar(inicios[Math.floor(Math.random() * inicios.length)]);
   try { await roteiro(); } catch (e) { console.error(e); }
   await voltar();
-  gAvatar.classList.remove('agindo'); ocupado = false;
+  gAvatar.classList.remove('agindo'); ocupado = false; ilhaGuia(null);
   falar(fim, opcoes);
 }
 

@@ -38,7 +38,7 @@ Tudo foi escrito do zero, sem bibliotecas de interface. É um projeto para prati
 - 🪟 **Janelas arrastáveis** com fechar, minimizar (com animação) e maximizar; a janela clicada vai para frente
 - 🧲 **Dock** com indicador de apps abertos e tooltips
 - 🖱️ **Menu de contexto** (botão direito no desktop)
-- 🔔 **Notificações** deslizantes
+- 🏝️ **Ilha dinâmica** no topo: notificações, status da guia e mini-player de música (play/pause e progresso)
 - 🕐 **Relógio** na barra de menu
 
 ### Apps dentro do portfólio

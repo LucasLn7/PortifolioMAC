@@ -453,3 +453,54 @@ button { font: inherit; color: inherit; cursor: pointer; border: 0; background: 
   .guia { --av: 64px; }
   .guia-balao { width: calc(100vw - 24px); }
 }
+
+/* ── ILHA DINÂMICA ── */
+.ilha {
+  position: fixed; top: 4px; left: 50%; transform: translateX(-50%); z-index: 5200;
+  display: flex; align-items: center; gap: .65rem; padding: 0 12px; overflow: hidden;
+  width: 104px; height: 28px; border-radius: 22px; background: #000; color: #fff;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, .35);
+  transition: width .45s cubic-bezier(.3, 1.3, .5, 1), height .45s cubic-bezier(.3, 1.3, .5, 1), border-radius .45s, padding .3s;
+}
+.ilha[data-modo="idle"]::after { content: ''; width: 8px; height: 8px; margin-left: auto; border-radius: 50%; background: #1d1f33; }
+.ilha[data-modo="tocando"], .ilha[data-modo="aberta"] { cursor: pointer; }
+.ilha[data-modo="aviso"] { width: min(340px, calc(100vw - 16px)); height: 64px; border-radius: 30px; padding: 0 18px; }
+.ilha[data-modo="guia"] { width: min(260px, calc(100vw - 16px)); height: 34px; border-radius: 20px; }
+.ilha[data-modo="tocando"] { width: 150px; }
+.ilha[data-modo="aberta"] { width: min(340px, calc(100vw - 16px)); height: 74px; border-radius: 30px; padding: 0 16px; }
+
+.ilha > * { display: none; animation: ilha-in .35s .12s both; }
+.ilha[data-modo="aviso"] > .ilha-ic, .ilha[data-modo="guia"] > .ilha-ic, .ilha[data-modo="tocando"] > .ilha-ic { display: block; }
+.ilha[data-modo="aviso"] > .ilha-textos, .ilha[data-modo="guia"] > .ilha-textos { display: flex; flex-direction: column; min-width: 0; }
+.ilha[data-modo="tocando"] > .ondas { display: flex; }
+.ilha[data-modo="aberta"] > .ilha-musica { display: flex; }
+.ilha[data-modo="guia"] #ilhaTit { display: none; }
+
+.ilha-ic { flex-shrink: 0; font-size: 1.15rem; color: #a78bfa; }
+.ilha[data-modo="aviso"] .ilha-ic { font-size: 1.4rem; }
+.ilha-ic.girando { animation: girar 1.6s linear infinite; }
+.ilha-textos strong { font-size: .86rem; line-height: 1.25; }
+.ilha-textos span { font-size: .78rem; line-height: 1.3; color: #b8bdd4; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+
+.ondas { align-items: flex-end; gap: 3px; height: 14px; margin-left: auto; }
+.ondas i { width: 3px; height: 100%; border-radius: 2px; background: #a78bfa; transform-origin: bottom; animation: onda-som 1s ease-in-out infinite; }
+.ondas i:nth-child(2) { animation-delay: .15s; } .ondas i:nth-child(3) { animation-delay: .3s; } .ondas i:nth-child(4) { animation-delay: .45s; }
+
+.ilha-musica { align-items: center; gap: .7rem; width: 100%; }
+.ilha-btn { width: 38px; height: 38px; border-radius: 50%; flex-shrink: 0; display: flex; align-items: center; justify-content: center; background: #fff; color: #000; }
+.ilha-btn:last-child { width: 32px; height: 32px; background: rgba(255, 255, 255, .15); color: #fff; font-size: .8rem; }
+.ilha-prog { flex: 1; min-width: 0; display: flex; align-items: center; gap: .5rem; font-size: .7rem; color: #b8bdd4; }
+.ilha-barra { flex: 1; height: 4px; border-radius: 4px; background: rgba(255, 255, 255, .2); overflow: hidden; }
+.ilha-barra i { display: block; width: 0; height: 100%; background: #a78bfa; transition: width .5s linear; }
+
+@keyframes ilha-in { from { opacity: 0; transform: scale(.9); } to { opacity: 1; transform: none; } }
+@keyframes onda-som { 0%, 100% { transform: scaleY(.3); } 50% { transform: scaleY(1); } }
+@media (prefers-reduced-motion: reduce) {
+  .ilha { transition: none; } .ilha > * { animation: none; }
+  .ondas i { animation: none; transform: scaleY(.6); } .ilha-ic.girando { animation: none; }
+}
+@media (max-width: 768px) {
+  .ilha { width: 84px; }
+  .mb-right > i, .relogio-data { display: none; }
+  #appName { max-width: 72px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+}
