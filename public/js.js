@@ -406,15 +406,18 @@ itensSpot.push(
 );
 
 // ── GUIA (Paimon) ──
-// Coloque a imagem da guia em img/paimon.png (PNG com fundo transparente funciona melhor).
+// Coloque a imagem da guia em img/paimon.png (PNG com fundo transparente). Sem ela, aparece uma estrela dourada.
 const gBalao = document.getElementById('guiaBalao');
 const gTexto = document.getElementById('guiaTexto');
 const gOpcoes = document.getElementById('guiaOpcoes');
 const gInput = document.getElementById('guiaInput');
 const gImg = document.getElementById('guiaImg');
+const gAvatar = document.getElementById('guiaAvatar');
 const reduzirMov = matchMedia('(prefers-reduced-motion: reduce)').matches;
-let digitando;
+const dormir = ms => new Promise(r => setTimeout(r, reduzirMov ? 0 : ms));
+let digitando, ocupado = false, ultimoMenu = 'principal';
 
+// ── imagem da guia ──
 function falhaImagem() {
   const s = document.createElement('span');
   s.className = 'guia-fallback'; s.textContent = '✦';
@@ -423,6 +426,13 @@ function falhaImagem() {
 gImg.addEventListener('error', falhaImagem, { once: true });
 if (gImg.complete && gImg.naturalWidth === 0) falhaImagem();
 
+// o "slot" guarda o lugar dela enquanto ela sai voando
+const slot = document.createElement('div');
+slot.className = 'guia-slot';
+gAvatar.replaceWith(slot);
+slot.appendChild(gAvatar);
+
+// ── fala ──
 function falar(txt, opcoes = []) {
   gBalao.hidden = false;
   gOpcoes.replaceChildren();
@@ -440,63 +450,232 @@ function falar(txt, opcoes = []) {
   }, 16);
 }
 
-const respostas = {
-  quem: { t: 'Este é o Lucas! 19 anos, de São Paulo, estudante de ADS na FAM e estagiário de TI na Progroup. Ele une suporte técnico com desenvolvimento full-stack.', a: () => abrir('sobre') },
-  exp: { t: 'Desde agosto de 2025 ele faz Help Desk na Progroup: atende usuários, registra chamados e conserta computadores no laboratório de TI.', a: () => abrir('experiencia') },
-  skills: { t: 'HTML, CSS, JavaScript, Node.js, Python, Git, redes e IA/APIs. Fora do código, Help Desk e manutenção de computadores.', a: () => abrir('skills') },
-  projetos: { t: 'São três: a landing do Corinthians com chatbot de IA, um sistema de estoque em desenvolvimento e a landing da Limpeza SP, que dá para ver ao vivo aqui dentro.', a: () => abrir('projetos') },
-  contato: { t: 'O Lucas está aberto a oportunidades, freelas e parcerias! Escreva na janela de mensagens: ela chega direto no WhatsApp dele.', a: () => abrir('contato') },
-  curriculo: { t: 'Aqui está o currículo dele. Dá para baixar pelo botão.', a: () => abrir('curriculo') },
-  github: { t: 'Os repositórios do Lucas, direto do GitHub.', a: () => abrir('github') },
-  terminal: { t: 'Tem um terminal de verdade aqui! Digite help para ver os comandos.', a: () => { abrir('terminal'); setTimeout(() => termInput.focus(), 50); } },
-  musica: { t: 'A playlist de quem programa ouvindo música.', a: () => { abrir('musica'); carregarMusica(); } },
-  tema: { t: 'Trocando entre claro e escuro!', a: alternarTema },
-  oi: { t: 'Oi, viajante! Paimon está aqui para ajudar. Pergunte sobre o Lucas ou escolha uma opção.' },
-  ajuda: { t: 'Paimon sabe falar do Lucas, da experiência, das skills, dos projetos e do contato. Também faz um passeio guiado!' },
-  tour: { a: () => iniciarTour() }
+// ── a guia voa e aperta os botões ──
+let voando = false;
+const posicionar = (x, y) => { gAvatar.style.transform = `translate(${x}px, ${y}px)`; };
+
+async function decolar() {
+  if (voando) return;
+  const r = slot.getBoundingClientRect();
+  gAvatar.style.transition = 'none';
+  posicionar(r.left, r.top);
+  gAvatar.classList.add('voando');
+  void gAvatar.offsetWidth;
+  gAvatar.style.transition = '';
+  voando = true;
+}
+function mostrarOnda(x, y) {
+  const o = document.createElement('div');
+  o.className = 'guia-onda';
+  o.style.left = x + 'px'; o.style.top = y + 'px';
+  document.body.appendChild(o);
+  setTimeout(() => o.remove(), 450);
+}
+async function clicarEm(el) {
+  if (!el) return;
+  await decolar();
+  const w = slot.getBoundingClientRect().width;
+  const r = el.getBoundingClientRect();
+  const x = Math.min(Math.max(r.left + r.width / 2 - w / 2, 4), innerWidth - w - 4);
+  const y = r.top > w + 40 ? r.top - w + 14 : r.bottom - 14; // pousa acima do botão (ou abaixo, se ele estiver no topo)
+  posicionar(x, y);
+  await dormir(950);
+  gAvatar.classList.add('apertando'); el.classList.add('clicado-guia');
+  mostrarOnda(r.left + r.width / 2, r.top + r.height / 2);
+  await dormir(340);
+  gAvatar.classList.remove('apertando'); el.classList.remove('clicado-guia');
+}
+async function voltar() {
+  if (!voando) return;
+  const r = slot.getBoundingClientRect();
+  posicionar(r.left, r.top);
+  await dormir(900);
+  gAvatar.classList.remove('voando');
+  gAvatar.style.transform = '';
+  voando = false;
+}
+async function digitar(campo, texto) {
+  campo.focus();
+  for (const c of texto) {
+    campo.value += c;
+    campo.dispatchEvent(new Event('input', { bubbles: true }));
+    await dormir(70);
+  }
+}
+const enter = campo => campo.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true }));
+
+async function abrirApp(id) {
+  const el = document.querySelector(`.dock-item[data-abrir="${id}"]`);
+  await clicarEm(el);
+  if (el) el.click();
+  await dormir(350);
+}
+async function demoTerminal(cmds) {
+  await abrirApp('terminal');
+  for (const c of cmds) {
+    await digitar(termInput, c);
+    await dormir(250);
+    enter(termInput);
+    await dormir(700);
+  }
+}
+const roteiros = {
+  async vivo() {
+    await abrirApp('projetos');
+    await dormir(300);
+    const card = document.querySelector('.proj[data-demo]');
+    await clicarEm(card);
+    card.click();
+  },
+  async mensagem() {
+    await abrirApp('contato');
+    const campo = document.getElementById('nome');
+    await clicarEm(campo);
+    campo.focus();
+  },
+  async linkedin() {
+    const a = document.querySelector('.dock-item[data-nome="LinkedIn"]');
+    await clicarEm(a);
+    a.click();
+  },
+  async tema() {
+    const b = document.querySelector('[data-cc]');
+    await clicarEm(b); b.click();
+    await dormir(300);
+    const t = document.getElementById('ccTema');
+    await clicarEm(t); t.click();
+    await dormir(600);
+    await clicarEm(b); b.click();
+  },
+  async busca() {
+    const b = document.querySelector('[data-spot]');
+    await clicarEm(b); b.click();
+    await dormir(300);
+    await digitar(spotInput, 'projetos');
+    await dormir(500);
+    enter(spotInput);
+  },
+  async lixeira() {
+    const l = document.getElementById('lixeira');
+    await clicarEm(l); l.click();
+  }
 };
+
+async function agir(roteiro, fim, opcoes) {
+  if (ocupado) return;
+  ocupado = true; gAvatar.classList.add('agindo');
+  const inicios = ['Deixa que Paimon clica!', 'Já abro, um segundinho!', 'Paimon cuida disso!'];
+  falar(inicios[Math.floor(Math.random() * inicios.length)]);
+  try { await roteiro(); } catch (e) { console.error(e); }
+  await voltar();
+  gAvatar.classList.remove('agindo'); ocupado = false;
+  falar(fim, opcoes);
+}
+
+// ── conteúdo ──
+const R = {
+  quem: ['Este é o Lucas! 19 anos, de São Paulo, estudante de ADS na FAM e estagiário de TI na Progroup. Ele une suporte técnico com desenvolvimento full-stack.', () => abrirApp('sobre')],
+  formacao: ['Ele cursa Análise e Desenvolvimento de Sistemas na FAM desde 2025, com foco em desenvolvimento web, lógica de programação, banco de dados e infraestrutura.', () => abrirApp('experiencia')],
+  skills: ['HTML, CSS, JavaScript, Node.js, Python, Git, redes e IA/APIs. Fora do código, Help Desk e manutenção de computadores.', () => abrirApp('skills')],
+  exp: ['Desde agosto de 2025 ele faz Help Desk na Progroup: atende usuários, registra chamados e conserta computadores no laboratório de TI.', () => abrirApp('experiencia')],
+  projetos: ['São três: a landing do Corinthians com chatbot de IA, um sistema de estoque em desenvolvimento e a landing da Limpeza SP.', () => abrirApp('projetos')],
+  vivo: ['Esse é o site da Limpeza SP rodando ao vivo, dentro do portfólio!', roteiros.vivo],
+  github: ['Os repositórios do Lucas, direto do GitHub.', () => abrirApp('github')],
+  curriculo: ['Aqui está o currículo. Dá para baixar pelo botão.', () => abrirApp('curriculo')],
+  musica: ['A playlist de quem programa ouvindo música.', () => abrirApp('musica')],
+  mensagem: ['Pronto! É só escrever seu nome e a mensagem: ela chega direto no WhatsApp do Lucas.', roteiros.mensagem],
+  contratar: ['O Lucas está aberto a oportunidades, freelas e parcerias! Paimon abriu o formulário para você.', roteiros.mensagem],
+  linkedin: ['Paimon clicou no LinkedIn dele. Se a aba não abriu, o navegador bloqueou o pop-up.', roteiros.linkedin],
+  terminal: ['O terminal é de verdade! Paimon digitou dois comandos. Tente também o help.', () => demoTerminal(['whoami', 'ls'])],
+  tema: ['Tema trocado! Dá para voltar do mesmo jeito.', roteiros.tema],
+  busca: ['Essa é a busca. Ctrl+K em qualquer momento acha janelas e projetos.', roteiros.busca]
+};
+const fatos = [
+  'O Lucas já diagnosticou e consertou computadores com defeito no laboratório de TI da Progroup.',
+  'O chatbot do projeto do Corinthians guarda as chaves de API no backend, com Node.js, por segurança.',
+  'Este portfólio inteiro é feito com HTML, CSS e JavaScript puros, sem framework nenhum.',
+  'O Lucas junta suporte técnico e programação: sabe resolver o problema e também construir a solução.',
+  'Aperte Ctrl+K em qualquer lugar do site para buscar janelas e projetos.'
+];
+
+const menus = {
+  principal: ['Paimon pode abrir os apps por você! Escolha uma categoria:', [['Sobre o Lucas', 'sobre'], ['Trabalho', 'trabalho'], ['Contato', 'contato'], ['Explorar o site', 'explorar'], ['Passeio guiado', 'tour'], ['Surpresa', 'surpresa']]],
+  sobre: ['O que você quer saber sobre o Lucas?', [['Quem é ele?', 'quem'], ['Formação', 'formacao'], ['Skills', 'skills'], ['Curiosidade', 'curiosidade'], ['Voltar', 'principal']]],
+  trabalho: ['Vamos ver o trabalho dele:', [['Experiência', 'exp'], ['Projetos', 'projetos'], ['Ver Limpeza SP ao vivo', 'vivo'], ['Código no GitHub', 'github'], ['Currículo', 'curriculo'], ['Voltar', 'principal']]],
+  contato: ['Como você quer falar com ele?', [['Mandar mensagem', 'mensagem'], ['LinkedIn', 'linkedin'], ['Currículo', 'curriculo'], ['Está contratando?', 'contratar'], ['Voltar', 'principal']]],
+  explorar: ['Coisas legais para explorar:', [['Terminal em ação', 'terminal'], ['Música', 'musica'], ['Trocar tema', 'tema'], ['Busca (Ctrl+K)', 'busca'], ['Voltar', 'principal']]]
+};
+const mapOps = ops => ops.map(([rotulo, a]) => [rotulo, () => ir(a)]);
+function mostrarMenu(nome = 'principal') {
+  const [t, ops] = menus[nome];
+  ultimoMenu = nome;
+  falar(t, mapOps(ops));
+}
+function menu() { mostrarMenu('principal'); }
+function ir(chave) {
+  if (chave === 'menu') return mostrarMenu('principal');
+  if (menus[chave]) return mostrarMenu(chave);
+  responder(chave);
+}
+const volta = () => ultimoMenu === 'principal'
+  ? [['Menu principal', menu]]
+  : [['Voltar', () => mostrarMenu(ultimoMenu)], ['Menu principal', menu]];
+
+function curiosidade() {
+  const f = fatos[Math.floor(Math.random() * fatos.length)];
+  falar(f, [['Outra curiosidade', curiosidade], ...volta()]);
+}
+function surpresa() {
+  const s = Math.floor(Math.random() * 3);
+  if (s === 0) return curiosidade();
+  if (s === 1) return agir(() => demoTerminal(['sudo']), 'Paimon tentou um comando proibido e o terminal não perdoou!', volta());
+  agir(roteiros.lixeira, 'Paimon mexeu na lixeira e achou uma mensagem!', volta());
+}
+function responder(chave) {
+  if (chave === 'tour') return iniciarTour();
+  if (chave === 'curiosidade') return curiosidade();
+  if (chave === 'surpresa') return surpresa();
+  if (chave === 'oi') return falar('Oi, viajante! Paimon está aqui. Pergunte algo ou escolha uma opção.', mapOps(menus.principal[1]));
+  const r = R[chave];
+  if (r) agir(r[1], r[0], volta());
+}
+function guiaSaudar() {
+  ultimoMenu = 'principal';
+  falar('Oi, viajante! Eu sou a Paimon, guia deste portfólio. Paimon abre os apps por você: é só escolher!', mapOps(menus.principal[1]));
+}
+
 const intencoes = [
-  [['quem', 'sobre', 'lucas', 'apresent'], 'quem'],
+  [['ao vivo', 'demo', 'previa'], 'vivo'],
+  [['contrat', 'vaga', 'oportunidade', 'freela'], 'contratar'],
+  [['mandar mensagem', 'enviar mensagem', 'whatsapp', 'formulario'], 'mensagem'],
+  [['linkedin'], 'linkedin'],
+  [['contat', 'mensagem', 'falar'], 'contato'],
+  [['formacao', 'faculdade', 'estuda', 'curso'], 'formacao'],
   [['experienc', 'estagio', 'trabalh', 'progroup', 'help desk', 'suporte'], 'exp'],
-  [['skill', 'habilidade', 'tecnolog', 'stack', 'linguagem', 'sabe'], 'skills'],
+  [['skill', 'habilidade', 'tecnolog', 'stack', 'linguagem'], 'skills'],
   [['projeto', 'portfolio', 'corinthians', 'estoque', 'limpeza'], 'projetos'],
-  [['contat', 'whatsapp', 'mensagem', 'contrat', 'vaga', 'oportunidade', 'freela', 'falar'], 'contato'],
   [['curricul', 'cv', 'pdf'], 'curriculo'],
   [['github', 'codigo', 'repositorio'], 'github'],
   [['terminal', 'comando'], 'terminal'],
   [['musica', 'spotify', 'playlist'], 'musica'],
-  [['tema', 'escuro', 'claro', 'noite', 'dia'], 'tema'],
+  [['tema', 'escuro', 'claro', 'noite'], 'tema'],
+  [['busca', 'pesquis', 'ctrl'], 'busca'],
+  [['curiosidade', 'fato'], 'curiosidade'],
+  [['surpresa', 'aleatorio'], 'surpresa'],
   [['passeio', 'tour', 'guiar'], 'tour'],
-  [['ajuda', 'help', 'opcoes', 'o que voce faz'], 'ajuda']
+  [['ajuda', 'opcoes', 'menu'], 'menu'],
+  [['quem', 'sobre', 'lucas', 'apresent'], 'quem']
 ];
-
-const menuPrincipal = () => [
-  ['Quem é o Lucas?', () => responder('quem')],
-  ['Experiência', () => responder('exp')],
-  ['Projetos', () => responder('projetos')],
-  ['Skills', () => responder('skills')],
-  ['Contratar', () => responder('contato')],
-  ['Passeio guiado', () => responder('tour')]
-];
-function menu() { falar('O que Paimon pode mostrar?', menuPrincipal()); }
-function guiaSaudar() {
-  falar('Oi, viajante! Eu sou a Paimon, guia deste portfólio. Por onde Paimon começa a mostrar o trabalho do Lucas?', menuPrincipal());
-}
-function responder(chave) {
-  const r = respostas[chave];
-  if (!r) return;
-  if (r.a) r.a();
-  if (r.t) falar(r.t, [['Voltar ao menu', menu]]);
-}
 function entender(q) {
+  if (ocupado) return;
   const n = norm(q);
   const hit = intencoes.find(([ks]) => ks.some(k => n.includes(k)));
-  if (hit) return responder(hit[1]);
+  if (hit) return ir(hit[1]);
   if (n.split(/\W+/).some(t => ['oi', 'ola', 'opa', 'hey', 'eai'].includes(t))) return responder('oi');
-  falar('Hm, Paimon não entendeu essa... Tente perguntar sobre projetos, skills, experiência ou contato!', menuPrincipal());
+  falar('Hm, Paimon não entendeu essa... Tente uma destas opções:', mapOps(menus.principal[1]));
 }
 
-// passeio guiado
+// ── passeio guiado ──
 const passos = [
   ['sobre', 'Primeiro, quem é o Lucas: 19 anos, estudante de ADS e estagiário de TI.'],
   ['experiencia', 'Aqui está a trajetória: Help Desk na Progroup, com chamados e reparo de computadores no laboratório.'],
@@ -508,14 +687,13 @@ let passo = 0;
 function iniciarTour() { passo = 0; mostrarPasso(); }
 function mostrarPasso() {
   const [id, t] = passos[passo];
-  abrir(id);
   const ultimo = passo === passos.length - 1;
-  falar(t, ultimo
+  agir(() => abrirApp(id), t, ultimo
     ? [['Fim do passeio', menu]]
     : [['Próximo', () => { passo++; mostrarPasso(); }], ['Parar', menu]]);
 }
 
-document.getElementById('guiaAvatar').addEventListener('click', () => { gBalao.hidden ? menu() : (gBalao.hidden = true); });
+gAvatar.addEventListener('click', () => { if (ocupado) return; gBalao.hidden ? menu() : (gBalao.hidden = true); });
 document.getElementById('guiaFechar').addEventListener('click', () => { gBalao.hidden = true; });
 document.getElementById('guiaForm').addEventListener('submit', e => {
   e.preventDefault();
