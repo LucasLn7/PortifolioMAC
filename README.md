@@ -7,7 +7,7 @@ Janelas arrastáveis, dock, terminal, busca estilo Spotlight e uma guia que abre
 
 Feito com **HTML, CSS e JavaScript puros**, sem frameworks e sem dependências de build.
 
-[![Demo](https://img.shields.io/badge/🌐_Ver_demo-lucasln7.github.io-8b7bf0?style=for-the-badge)](https://lucasln7.github.io/lucas-portfolio/)
+[![Demo](https://img.shields.io/badge/🌐_Ver_demo-lucasln7.github.io-8b7bf0?style=for-the-badge)](https://lucasln7.github.io/PortifolioMAC/)
 [![LinkedIn](https://img.shields.io/badge/LinkedIn-lucasln7-0077B5?style=for-the-badge&logo=linkedin)](https://www.linkedin.com/in/lucasln7/)
 [![GitHub](https://img.shields.io/badge/GitHub-LucasLn7-181717?style=for-the-badge&logo=github)](https://github.com/LucasLn7)
 
